@@ -29,11 +29,11 @@ public class SparkJavaJoinsTest implements Serializable {
 	@Test
 	public void testExampleJob() {
 		ExampleJob job = new ExampleJob(sc);
-		//JavaPairRDD<String, String> result = job.run("./transactions.txt", "./users.txt");
+		JavaPairRDD<String, String> result = job.run("./transactions.txt", "./users.txt");
 		    
-		/*Assert.assertEquals("1", result.collect().get(0)._1);
+		Assert.assertEquals("1", result.collect().get(0)._1);
 		Assert.assertEquals("3", result.collect().get(0)._2);
 		Assert.assertEquals("2", result.collect().get(1)._1);
-		Assert.assertEquals("1", result.collect().get(1)._2);*/
+		Assert.assertEquals("1", result.collect().get(1)._2);
 	}
 }
