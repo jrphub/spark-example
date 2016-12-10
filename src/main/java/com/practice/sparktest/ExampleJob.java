@@ -1,4 +1,4 @@
-package com.matthewrathbone.sparktest;
+package com.practice.sparktest;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,6 +16,16 @@ import scala.Tuple2;
 
 import com.google.common.base.Optional;
 
+/*
+ * No. of unique locations in which each product is sold
+ *
+ * i.e.
+ * prod_id | Count of Distinct locations
+ * 
+ * Users : id, email, language, location
+ * Transactions : trans_id, prod_id, user_id, purchase_amt, item_description
+ * 
+ */
 public class ExampleJob {
     private static JavaSparkContext sc;
     

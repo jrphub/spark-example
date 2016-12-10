@@ -1,7 +1,8 @@
-package com.matthewrathbone.sparktest;
+package com.practice.sparktest;
 
 import java.io.Serializable;
-import com.matthewrathbone.sparktest.ExampleJob;
+
+import com.practice.sparktest.ExampleJob;
 
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaSparkContext;
