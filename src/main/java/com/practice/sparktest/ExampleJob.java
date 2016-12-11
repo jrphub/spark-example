@@ -22,7 +22,7 @@ import com.google.common.base.Optional;
  * i.e.
  * prod_id | Count of Distinct locations
  * 
- * Users : id, email, language, location
+ * Users : id, email, language, location, age, gender
  * Transactions : trans_id, prod_id, user_id, purchase_amt, item_description
  * 
  */
