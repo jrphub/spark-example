@@ -1,5 +1,6 @@
 package com.practice.sparktest;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -11,6 +12,7 @@ import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.api.java.function.PairFunction;
+import org.apache.spark.rdd.RDD;
 
 import scala.Tuple2;
 
@@ -34,14 +36,43 @@ public class ExampleJob {
     }
     
     public static void main(String[] args) throws Exception {
+    	//for local mode, no hadoop to be started
         JavaSparkContext sc = new JavaSparkContext(new SparkConf().setAppName("SparkJoins").setMaster("local"));
         ExampleJob job = new ExampleJob(sc);
+        //for debugging purpose, creating intermediate files in debug directory
+        File debugDir = new File("debug");
+        deleteDirIfExists(debugDir);
+        
         JavaPairRDD<String, String> output_rdd = job.run("transactions.txt", "users.txt");
+        File outputDir = new File("output");
+        if (outputDir.exists()) {
+        	System.out.println("Deleting output directory : " + outputDir + " ...");
+        	File[] files = outputDir.listFiles();
+        	for (File file : files) {
+        		file.delete();
+        	}
+        	outputDir.delete();
+        }
         output_rdd.saveAsHadoopFile("output", String.class, String.class, TextOutputFormat.class);
         sc.close();
     }
     
-    public static JavaPairRDD<String, String> run(String t, String u){
+    private static void deleteDirIfExists(File debugDir) {
+		if (debugDir.exists()) {
+			File[] allFiles = debugDir.listFiles();
+			for (File file : allFiles) {
+				if (file.isDirectory()) {
+					deleteDirIfExists(file);
+				} else {
+					file.delete();
+				}
+			}
+			debugDir.delete();
+		}
+		
+	}
+
+	public static JavaPairRDD<String, String> run(String t, String u){
         JavaRDD<String> transactionInputFile = sc.textFile(t);
         
         //(user_id, prod_id) : mapToPair
@@ -52,6 +83,10 @@ public class ExampleJob {
             }
         });
         
+        transactionPairs.saveAsTextFile("debug/01_transactionPairs");
+        
+        
+        
         JavaRDD<String> customerInputFile = sc.textFile(u);
         //(id, location) : mapToPair
         JavaPairRDD<Integer, String> customerPairs = customerInputFile.mapToPair(new PairFunction<String, Integer, String>() {
@@ -60,6 +95,8 @@ public class ExampleJob {
                 return new Tuple2<Integer, String>(Integer.valueOf(customerSplit[0]), customerSplit[3]);
             }
         });
+        
+        customerInputFile.saveAsTextFile("debug/02_customerInputFile");
 
         Map<Integer, Object> result = countData(modifyData(joinData(transactionPairs, customerPairs)));
         
@@ -71,18 +108,23 @@ public class ExampleJob {
 	    
 	    //Pass the list to parallelizePairs to make JavaPairRDD
 	    JavaPairRDD<String, String> output_rdd = sc.parallelizePairs(output);
+	    
+	    output_rdd.saveAsTextFile("debug/05_result");
 	    return output_rdd;
 	}
     
     //prod_id, location : distinct values
 	public static JavaRDD<Tuple2<Integer,Optional<String>>> joinData(JavaPairRDD<Integer, Integer> t, JavaPairRDD<Integer, String> u){
         JavaRDD<Tuple2<Integer,Optional<String>>> leftJoinOutput = t.leftOuterJoin(u).values().distinct();
+        leftJoinOutput.saveAsTextFile("debug/03_leftJoinOutput");
         return leftJoinOutput;
 	}
 	
 	//prod_id, location : non-null values because of using Optional Class which box values and avoid null values
 	public static JavaPairRDD<Integer, String> modifyData(JavaRDD<Tuple2<Integer,Optional<String>>> d){
-		return d.mapToPair(KEY_VALUE_PAIRER);
+		JavaPairRDD<Integer, String> modify = d.mapToPair(KEY_VALUE_PAIRER);
+		modify.saveAsTextFile("debug/04_modifyData");
+		return modify;
 	}
 	
 	//Map<prod_id, Count of distinct location>
