@@ -31,7 +31,7 @@ public class TopBusinessLocation {
     public static void main(String[] args) throws Exception {
         JavaSparkContext sc = new JavaSparkContext(new SparkConf().setAppName("TopBusinessLocation").setMaster("local"));
         setJsc(sc);
-        JavaPairRDD<String, Integer> output_rdd = run("transactions.txt", "users.txt");
+        JavaPairRDD<String, Integer> output_rdd = run("data/transactions.txt", "data/users.txt");
         output_rdd.saveAsHadoopFile("output_TopBusinessLocation", String.class, Integer.class, TextOutputFormat.class);
         sc.close();
     }

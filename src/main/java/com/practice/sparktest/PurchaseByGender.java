@@ -26,7 +26,7 @@ public class PurchaseByGender {
     public static void main(String[] args) throws Exception {
         JavaSparkContext sc = new JavaSparkContext(new SparkConf().setAppName("PurchaseByGender").setMaster("local"));
         setJsc(sc);
-        JavaPairRDD<String, Integer> output_rdd = run("transactions.txt", "users.txt");
+        JavaPairRDD<String, Integer> output_rdd = run("data/transactions.txt", "data/users.txt");
         output_rdd.saveAsHadoopFile("output_PurchaseByGender", String.class, Integer.class, TextOutputFormat.class);
         sc.close();
     }

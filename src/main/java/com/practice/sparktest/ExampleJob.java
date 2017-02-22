@@ -43,7 +43,7 @@ public class ExampleJob {
         File debugDir = new File("debug");
         deleteDirIfExists(debugDir);
         
-        JavaPairRDD<String, String> output_rdd = job.run("transactions.txt", "users.txt");
+        JavaPairRDD<String, String> output_rdd = job.run("data/transactions.txt", "data/users.txt");
         File outputDir = new File("output");
         if (outputDir.exists()) {
         	System.out.println("Deleting output directory : " + outputDir + " ...");
