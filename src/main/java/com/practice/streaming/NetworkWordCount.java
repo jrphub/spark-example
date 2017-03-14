@@ -21,7 +21,7 @@ public class NetworkWordCount {
 	public static void main(String[] args) {
 		SparkConf conf = new SparkConf().setMaster("local[2]").setAppName("NetworkWordCount");
 		
-		JavaStreamingContext jsc = new JavaStreamingContext(conf, Durations.seconds(1));
+		JavaStreamingContext jsc = new JavaStreamingContext(conf, Durations.seconds(10));
 		
 		JavaReceiverInputDStream jrids = jsc.socketTextStream("localhost", 9999);
 		
