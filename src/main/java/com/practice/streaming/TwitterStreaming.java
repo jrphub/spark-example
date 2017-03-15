@@ -21,9 +21,8 @@ public class TwitterStreaming {
 		String consumerSecret = "LwvOeBOxFIqYfXZD7AKMsouagDczwEynpNjj1P4qsCkI9WcRXi";
 		String accessToken = "<accessToken>";
 		String accessTokenSecret = "<Secrettoken>";
-
-		String[] filters = new String[] { consumerKey, consumerSecret,
-				accessToken, accessTokenSecret };
+		
+		String[] filters = new String[] { "narendramodi", "amitabh" };
 
 		// Set the system properties so that Twitter4j library used by Twitter
 		// stream
@@ -46,7 +45,7 @@ public class TwitterStreaming {
 				new Duration(2000));
 		JavaReceiverInputDStream<Status> stream = TwitterUtils.createStream(
 				jssc, filters);
-
+		
 		JavaDStream<String> words = stream
 				.flatMap(new FlatMapFunction<Status, String>() {
 					@Override
